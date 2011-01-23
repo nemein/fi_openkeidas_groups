@@ -25,6 +25,21 @@ class fi_openkeidas_groups_controllers_group extends midgardmvc_core_controllers
         $this->object = new fi_openkeidas_groups_group();
     }
 
+    public function get_read(array $args)
+    {
+        parent::get_read($args);
+
+        $this->data['admins'] = array();
+        $qb = new midgard_query_builder('fi_openkeidas_groups_group_member');
+        $qb->add_constraint('grp', '=', $this->object->id);
+        $qb->add_constraint('admin', '=', true);
+        $admins = $qb->execute();
+        foreach ($admins as $admin)
+        {
+            $this->data['admins'][] = new midgard_person($admin->person);
+        }
+    }
+
     public function load_form()
     {
         $this->form = midgardmvc_helper_forms::create('fi_openkeidas_diary_log');

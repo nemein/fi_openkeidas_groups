@@ -1,1 +1,9 @@
 <h1 tal:content="fi_openkeidas_groups/object/title">Opettajanhuone</h1>
+
+<h2>Ryhmämoottorit</h2>
+
+<ul>
+    <li tal:repeat="admin fi_openkeidas_groups/admins">
+        <span tal:content="string:${admin/firstname} ${admin/lastname}">Matti Meikäläinen</span>
+    </li>
+</ul>
