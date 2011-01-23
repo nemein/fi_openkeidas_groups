@@ -38,6 +38,71 @@ class fi_openkeidas_groups_controllers_group extends midgardmvc_core_controllers
         {
             $this->data['admins'][] = new midgard_person($admin->person);
         }
+
+        $this->data['is_member'] = $this->is_member();
+        $this->data['join_url'] = midgardmvc_core::get_instance()->dispatcher->generate_url
+        (
+            'group_join', array
+            (
+                'group' => $this->object->guid
+            ),
+            $this->request
+        );
+        $this->data['leave_url'] = midgardmvc_core::get_instance()->dispatcher->generate_url
+        (
+            'group_leave', array
+            (
+                'group' => $this->object->guid
+            ),
+            $this->request
+        );
+    }
+
+    private function is_member()
+    {
+        $qb = new midgard_query_builder('fi_openkeidas_groups_group_member');
+        $qb->add_constraint('grp', '=', $this->object->id);
+        $qb->add_constraint('person', '=', midgardmvc_core::get_instance()->authentication->get_person()->id);
+        if ($qb->count() > 0)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public function post_join(array $args)
+    {
+        $this->load_object($args);
+
+        $member = new fi_openkeidas_groups_group_member();
+        $member->person = midgardmvc_core::get_instance()->authentication->get_person()->id;
+        $member->grp = $this->object->id;
+        $member->admin = false;
+        $member->create();
+
+        midgardmvc_core::get_instance()->head->relocate($this->get_url_read());
+    }
+
+    public function post_leave(array $args)
+    {
+        $this->load_object($args);
+
+        $qb = new midgard_query_builder('fi_openkeidas_groups_group_member');
+        $qb->add_constraint('grp', '=', $this->object->id);
+        $qb->add_constraint('person', '=', midgardmvc_core::get_instance()->authentication->get_person()->id);
+        $members = $qb->execute();
+        foreach ($members as $member)
+        {
+            $member->delete();
+        }
+
+        midgardmvc_core::get_instance()->head->relocate
+        (
+            midgardmvc_core::get_instance()->dispatcher->generate_url
+            (
+                'index', array(), $this->request
+            )
+        );
     }
 
     public function load_form()

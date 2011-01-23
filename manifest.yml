@@ -39,3 +39,11 @@ routes:
         action: delete
         template_aliases: 
             content: fog-delete-group
+    group_join:
+        path: '/group/{$group}/join'
+        controller: fi_openkeidas_groups_controllers_group
+        action: join
+    group_leave:
+        path: '/group/{$group}/leave'
+        controller: fi_openkeidas_groups_controllers_group
+        action: leave

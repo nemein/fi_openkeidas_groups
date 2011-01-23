@@ -7,3 +7,15 @@
         <span tal:content="string:${admin/firstname} ${admin/lastname}">Matti Meikäläinen</span>
     </li>
 </ul>
+
+<p tal:condition="fi_openkeidas_groups/is_member">
+    <form method="post" tal:attributes="action fi_openkeidas_groups/leave_url">
+        <input type="submit" name="" value="Poistu ryhmästä" />
+    </form>
+</p>
+
+<p tal:condition="not: fi_openkeidas_groups/is_member">
+    <form method="post" tal:attributes="action fi_openkeidas_groups/join_url">
+        <input type="submit" name="" value="Liity ryhmään" />
+    </form>
+</p>
