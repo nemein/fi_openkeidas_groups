@@ -9,13 +9,13 @@ routes:
         action: list
         template_aliases: 
             content: fog-list-groups
-    top_groups:
-        path: '/active'
+    user_groups:
+        path: '/user'
         controller: fi_openkeidas_groups_controllers_groups
-        action: active
+        action: user
         template_aliases: 
             content: fog-list-groups
-    groups_active:
+    top_groups:
         path: '/active'
         controller: fi_openkeidas_groups_controllers_groups
         action: active
