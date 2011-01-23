@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Schema xmlns="http://www.midgard-project.org/repligard/1.4">
+    <type name="fi_openkeidas_groups_group" table="fi_openkeidas_groups_group">
+        <property name="id" type="unsigned integer" primaryfield="id">
+            <description>Local non-replication-safe database identifier</description>
+        </property>
+        <property name="title" type="string" index="yes" />
+    </type>
+
+    <type name="fi_openkeidas_groups_group_member" table="fi_openkeidas_groups_group_member" parent="fi_openkeidas_groups_group">
+        <property name="id" type="unsigned integer" primaryfield="id">
+            <description>Local non-replication-safe database identifier</description>
+        </property>
+        <property name="grp" type="unsigned integer" link="fi_openkeidas_groups_group:id" parentfield="grp" />
+        <property name="person" type="unsigned integer" link="midgard_person:id" />
+        <property name="admin" type="boolean" index="yes" />
+    </type>
+</Schema>

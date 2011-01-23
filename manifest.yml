@@ -1,0 +1,40 @@
+requires:
+    midgardmvc_helper_forms:
+        - {type: github, user: midgardproject, repository: midgardmvc_helper_forms, branch: master}
+routes:
+    index:
+        path: '/'
+        controller: fi_openkeidas_groups_controllers_groups
+        action: list
+        template_aliases: 
+            content: fog-list-groups
+    top_groups:
+        path: '/active'
+        controller: fi_openkeidas_groups_controllers_groups
+        action: active
+        template_aliases: 
+            content: fog-list-groups
+    groups_active:
+        path: '/active'
+        controller: fi_openkeidas_groups_controllers_groups
+        action: active
+        template_aliases: 
+            content: fog-list-groups
+    group_create:
+        path: '/group/create'
+        controller: fi_openkeidas_groups_controllers_group
+        action: create
+        template_aliases: 
+            content: fog-edit-group
+    group_read:
+        path: '/group/{$group}'
+        controller: fi_openkeidas_groups_controllers_group
+        action: read
+        template_aliases: 
+            content: fog-show-group
+    group_delete:
+        path: '/group/{$group}/delete'
+        controller: fi_openkeidas_groups_controllers_group
+        action: delete
+        template_aliases: 
+            content: fog-delete-group

@@ -1,0 +1,22 @@
+<h1>Ryhmät</h1>
+
+<table tal:condition="fi_openkeidas_groups/groups">
+    <thead>
+        <tr>
+            <th>Ryhmä</th>
+            <th>Jäseniä</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr tal:repeat="group fi_openkeidas_groups/groups">
+            <th>
+                <a tal:attributes="href group/url" tal:content="group/title">Opettajanhuone</a>
+            </th>
+            <td tal:content="group/members">5</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+    <a class="button row-2" href="/ryhmat/group/create/"><span>Luo ryhmä</span></a>
+</p>
