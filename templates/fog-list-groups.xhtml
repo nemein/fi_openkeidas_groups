@@ -12,7 +12,7 @@
             <th>
                 <a tal:attributes="href group/url" tal:content="group/title">Opettajanhuone</a>
             </th>
-            <td tal:content="group/members">5</td>
+            <td tal:condition="exists:group/members" tal:content="group/members">5</td>
         </tr>
     </tbody>
 </table>

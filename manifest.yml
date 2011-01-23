@@ -1,6 +1,7 @@
 requires:
     midgardmvc_helper_forms:
         - {type: github, user: midgardproject, repository: midgardmvc_helper_forms, branch: master}
+process_injector: fi_openkeidas_groups_injector
 routes:
     index:
         path: '/'
