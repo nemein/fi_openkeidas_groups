@@ -25,6 +25,7 @@ class fi_openkeidas_groups_controllers_groups
     {
         $member_qb = new midgard_query_builder('fi_openkeidas_groups_group_member');
         $member_qb->add_constraint('person', '=', midgardmvc_core::get_instance()->authentication->get_person()->id);
+        $member_qb->add_constraint('metadata.isapproved', '=', true);
         $members = $member_qb->execute();
 
         $this->data['groups'] = array();
@@ -69,6 +70,7 @@ class fi_openkeidas_groups_controllers_groups
 
         $member_qb = new midgard_query_builder('fi_openkeidas_groups_group_member');
         $member_qb->add_constraint('grp', '=', $group->id);
+        $member_qb->add_constraint('metadata.isapproved', '=', true);
         $group->members = $member_qb->count();
 
         return $group;

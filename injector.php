@@ -21,5 +21,6 @@ class fi_openkeidas_groups_injector
         $member->grp = $group->id;
         $member->admin = true;
         $member->create();
+        $member->approve();
     }
 }

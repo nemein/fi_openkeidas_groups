@@ -33,6 +33,7 @@ class fi_openkeidas_groups_controllers_group extends midgardmvc_core_controllers
         $qb = new midgard_query_builder('fi_openkeidas_groups_group_member');
         $qb->add_constraint('grp', '=', $this->object->id);
         $qb->add_constraint('admin', '=', true);
+        $qb->add_constraint('metadata.isapproved', '=', true);
         $admins = $qb->execute();
         foreach ($admins as $admin)
         {
@@ -63,6 +64,7 @@ class fi_openkeidas_groups_controllers_group extends midgardmvc_core_controllers
         $qb = new midgard_query_builder('fi_openkeidas_groups_group_member');
         $qb->add_constraint('grp', '=', $this->object->id);
         $qb->add_constraint('person', '=', midgardmvc_core::get_instance()->authentication->get_person()->id);
+        $qb->add_constraint('metadata.isapproved', '=', true);
         if ($qb->count() > 0)
         {
             return true;
