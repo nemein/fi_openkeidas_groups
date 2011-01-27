@@ -15,7 +15,7 @@
         <li tal:repeat="member fi_openkeidas_groups/members">
             <span tal:content="string:${member/firstname} ${member/lastname}">Matti Meikäläinen</span>
             <form tal:condition="not: member/metadata/isapproved" method="post" tal:attributes="action fi_openkeidas_groups/approve_url">
-                <input type="hidden" name="member" tal:attributes="member/id" />
+                <input type="hidden" name="member" tal:attributes="value member/id" />
                 <input type="submit" name="" value="Hyväksy jäseneksi" />
             </form>
         </li>

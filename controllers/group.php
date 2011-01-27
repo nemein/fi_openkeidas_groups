@@ -140,8 +140,17 @@ class fi_openkeidas_groups_controllers_group extends midgardmvc_core_controllers
         {
             throw new midgardmvc_exception_notfound("Member not found");
         }
-        $member = $members[0];
-        $member->approve();
+        $approved = false;
+        foreach ($members as $member)
+        {
+            if ($approved) {
+                // Kill duplicates
+                $member->delete();
+                continue;
+            }
+            $member->approve();
+            $approved = true;
+        }
         midgardmvc_core::get_instance()->head->relocate($this->get_url_read());
     }
 
