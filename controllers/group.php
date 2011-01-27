@@ -141,11 +141,16 @@ class fi_openkeidas_groups_controllers_group extends midgardmvc_core_controllers
     {
         $this->load_object($args);
 
-        $member = new fi_openkeidas_groups_group_member();
-        $member->person = midgardmvc_core::get_instance()->authentication->get_person()->id;
-        $member->grp = $this->object->id;
-        $member->admin = false;
-        $member->create();
+        if (!$this->is_member()
+        {
+            midgardmvc_core::get_instance()->authorization->enter_sudo('fi_openkeidas_groups');
+            $member = new fi_openkeidas_groups_group_member();
+            $member->person = midgardmvc_core::get_instance()->authentication->get_person()->id;
+            $member->grp = $this->object->id;
+            $member->admin = false;
+            $member->create();
+            midgardmvc_core::get_instance()->authorization->leave_sudo();
+        }
 
         midgardmvc_core::get_instance()->head->relocate($this->get_url_read());
     }
@@ -179,6 +184,7 @@ class fi_openkeidas_groups_controllers_group extends midgardmvc_core_controllers
             throw new midgardmvc_exception_notfound("Member not found");
         }
         $approved = false;
+        midgardmvc_core::get_instance()->authorization->enter_sudo('fi_openkeidas_groups');
         foreach ($members as $member)
         {
             if ($approved) {
@@ -189,6 +195,7 @@ class fi_openkeidas_groups_controllers_group extends midgardmvc_core_controllers
             $member->approve();
             $approved = true;
         }
+        midgardmvc_core::get_instance()->authorization->leave_sudo();
         midgardmvc_core::get_instance()->head->relocate($this->get_url_read());
     }
 
