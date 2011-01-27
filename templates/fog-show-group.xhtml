@@ -37,3 +37,10 @@
         <input type="submit" name="" value="Liity ryhmään" />
     </form>
 </p>
+
+<div tal:condition="fi_openkeidas_groups/challenges">
+    <h2>Haasta:</h2>
+    <form tal:repeat="challenge fi_openkeidas_groups/challenges" method="post" tal:attributes="action challenge/url">
+        <input type="submit" name="" tal:attributes="value challenge/title" />
+    </form>
+</div>
