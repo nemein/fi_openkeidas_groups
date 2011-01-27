@@ -141,7 +141,7 @@ class fi_openkeidas_groups_controllers_group extends midgardmvc_core_controllers
     {
         $this->load_object($args);
 
-        if (!$this->is_member()
+        if (!$this->is_member())
         {
             midgardmvc_core::get_instance()->authorization->enter_sudo('fi_openkeidas_groups');
             $member = new fi_openkeidas_groups_group_member();
