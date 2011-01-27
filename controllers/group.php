@@ -109,7 +109,7 @@ class fi_openkeidas_groups_controllers_group extends midgardmvc_core_controllers
 
     public function load_form()
     {
-        $this->form = midgardmvc_helper_forms::create('fi_openkeidas_diary_log');
+        $this->form = midgardmvc_helper_forms::create('fi_openkeidas_groups_group');
         $title = $this->form->add_field('title', 'text');
         $title_widget = $title->set_widget('text');
         $title_widget->set_label('Nimi');
