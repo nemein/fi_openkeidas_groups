@@ -8,6 +8,24 @@
     </li>
 </ul>
 
+<div class="members" tal:condition="fi_openkeidas_groups/is_admin">
+    <h2>Jäsenet</h2>
+
+    <ul tal:condition="fi_openkeidas_groups/members">
+        <li tal:repeat="member fi_openkeidas_groups/members">
+            <span tal:content="string:${member/firstname} ${member/lastname}">Matti Meikäläinen</span>
+            <form tal:condition="not: member/metadata/isapproved" method="post" tal:attributes="action fi_openkeidas_groups/approve_url">
+                <input type="hidden" name="member" tal:attributes="member/id" />
+                <input type="submit" name="" value="Hyväksy jäseneksi" />
+            </form>
+        </li>
+    </ul>
+
+    <p tal:condition="not: fi_openkeidas_groups/members">
+        Ei muita jäseniä.
+    </p>
+</div>
+
 <p tal:condition="fi_openkeidas_groups/is_member">
     <form method="post" tal:attributes="action fi_openkeidas_groups/leave_url">
         <input type="submit" name="" value="Poistu ryhmästä" />

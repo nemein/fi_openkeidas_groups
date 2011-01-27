@@ -43,6 +43,10 @@ routes:
         path: '/group/{$group}/join'
         controller: fi_openkeidas_groups_controllers_group
         action: join
+    group_join_approve:
+        path: '/group/{$group}/join/approve'
+        controller: fi_openkeidas_groups_controllers_group
+        action: join_approve
     group_leave:
         path: '/group/{$group}/leave'
         controller: fi_openkeidas_groups_controllers_group

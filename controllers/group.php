@@ -30,6 +30,7 @@ class fi_openkeidas_groups_controllers_group extends midgardmvc_core_controllers
         parent::get_read($args);
 
         $this->data['admins'] = array();
+        $this->data['is_admin'] = false;
         $qb = new midgard_query_builder('fi_openkeidas_groups_group_member');
         $qb->add_constraint('grp', '=', $this->object->id);
         $qb->add_constraint('admin', '=', true);
@@ -38,6 +39,32 @@ class fi_openkeidas_groups_controllers_group extends midgardmvc_core_controllers
         foreach ($admins as $admin)
         {
             $this->data['admins'][] = new midgard_person($admin->person);
+            if ($admin->person == midgardmvc_core::get_instance()->authentication->get_person()->id)
+            {
+                $this->data['is_admin'] = true;
+            }
+        }
+
+        if ($this->data['is_admin'])
+        {
+            $this->data['members'] = array();
+            $qb = new midgard_query_builder('fi_openkeidas_groups_group_member');
+            $qb->add_constraint('grp', '=', $this->object->id);
+            $qb->add_constraint('admin', '=', false);
+            $members = $qb->execute();
+            foreach ($members as $member)
+            {
+                $this->data['members'][] = new midgard_person($member->person);
+            }
+
+            $this->data['approve_url'] = midgardmvc_core::get_instance()->dispatcher->generate_url
+            (
+                'group_join_approve', array
+                (
+                    'group' => $this->object->guid
+                ),
+                $this->request
+            );
         }
 
         $this->data['is_member'] = $this->is_member();
@@ -82,6 +109,39 @@ class fi_openkeidas_groups_controllers_group extends midgardmvc_core_controllers
         $member->admin = false;
         $member->create();
 
+        midgardmvc_core::get_instance()->head->relocate($this->get_url_read());
+    }
+
+    public function post_join_approve(array $args)
+    {
+        $this->load_object($args);
+
+        $qb = new midgard_query_builder('fi_openkeidas_groups_group_member');
+        $qb->add_constraint('grp', '=', $this->object->id);
+        $qb->add_constraint('person', '=', midgardmvc_core::get_instance()->authentication->get_person()->id);
+        $qb->add_constraint('admin', '=', true);
+        $qb->add_constraint('metadata.isapproved', '=', true);
+        $admins = $qb->execute();
+        if (empty($admins))
+        {
+            throw new midgardmvc_exception_unauthorized("Not authorized to approve members");
+        }
+
+        if (!isset($_POST['member']))
+        {
+            throw new midgardmvc_exception_notfound("Specify which member to approve");
+        }
+
+        $qb = new midgard_query_builder('fi_openkeidas_groups_group_member');
+        $qb->add_constraint('grp', '=', $this->object->id);
+        $qb->add_constraint('person', '=', $_POST['member']);
+        $members = $qb->execute();
+        if (empty($members))
+        {
+            throw new midgardmvc_exception_notfound("Member not found");
+        }
+        $member = $members[0];
+        $member->approve();
         midgardmvc_core::get_instance()->head->relocate($this->get_url_read());
     }
 
