@@ -5,6 +5,7 @@
             <description>Local non-replication-safe database identifier</description>
         </property>
         <property name="title" type="string" index="yes" />
+        <property name="autocreated" type="boolean" />
     </type>
 
     <type name="fi_openkeidas_groups_group_member" table="fi_openkeidas_groups_group_member" parent="fi_openkeidas_groups_group">
