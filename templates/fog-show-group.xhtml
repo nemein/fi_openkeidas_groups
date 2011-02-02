@@ -26,11 +26,13 @@
     </p>
 </div>
 
-<p tal:condition="fi_openkeidas_groups/is_member">
-    <form method="post" tal:attributes="action fi_openkeidas_groups/leave_url">
-        <input type="submit" name="" value="Poistu ryhmästä" />
-    </form>
-</p>
+<tal:block tal:condition="exists: fi_openkeidas_groups/leave_url">
+    <p tal:condition="fi_openkeidas_groups/is_member">
+        <form method="post" tal:attributes="action fi_openkeidas_groups/leave_url">
+            <input type="submit" name="" value="Poistu ryhmästä" />
+        </form>
+    </p>
+</tal:block>
 
 <p tal:condition="not: fi_openkeidas_groups/is_member">
     <form method="post" tal:attributes="action fi_openkeidas_groups/join_url">

@@ -76,14 +76,18 @@ class fi_openkeidas_groups_controllers_group extends midgardmvc_core_controllers
             ),
             $this->request
         );
-        $this->data['leave_url'] = midgardmvc_core::get_instance()->dispatcher->generate_url
-        (
-            'group_leave', array
+
+        if (!$this->object->autocreated)
+        {
+            $this->data['leave_url'] = midgardmvc_core::get_instance()->dispatcher->generate_url
             (
-                'group' => $this->object->guid
-            ),
-            $this->request
-        );
+                'group_leave', array
+                (
+                    'group' => $this->object->guid
+                ),
+                $this->request
+            );
+        }
 
         $this->data['challenges'] = array();
         $mc = new midgard_collector('fi_openkeidas_groups_group_member', 'person', midgardmvc_core::get_instance()->authentication->get_person()->id);
@@ -202,6 +206,11 @@ class fi_openkeidas_groups_controllers_group extends midgardmvc_core_controllers
     public function post_leave(array $args)
     {
         $this->load_object($args);
+
+        if ($this->object->autocreated)
+        {
+            throw new Exception("Cannot leave autocreated groups");
+        }
 
         $qb = new midgard_query_builder('fi_openkeidas_groups_group_member');
         $qb->add_constraint('grp', '=', $this->object->id);
