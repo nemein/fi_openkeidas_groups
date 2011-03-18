@@ -4,7 +4,7 @@
     <tal:block tal:content="structure fi_openkeidas_groups/form/search/widget" />
 </form>
 
-<table tal:condition="fi_openkeidas_groups/search_groups">
+<table tal:condition="fi_openkeidas_groups/groups">
     <thead>
         <tr>
             <th>Ryhmä</th>
@@ -12,7 +12,7 @@
         </tr>
     </thead>
     <tbody>
-        <tr tal:repeat="group fi_openkeidas_groups/search_groups">
+        <tr tal:repeat="group fi_openkeidas_groups/groups">
             <th>
                 <a tal:attributes="href group/url" tal:content="group/title">Opettajanhuone</a>
             </th>

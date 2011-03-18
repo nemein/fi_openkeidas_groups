@@ -13,12 +13,11 @@ class fi_openkeidas_groups_controllers_groups
         $qb = new midgard_query_builder('fi_openkeidas_groups_group');
         $qb->set_limit(10);
         $qb->add_order('metadata.created', 'DESC');
-        $this->data['groups'] = array();
-        $groups = $qb->execute();
-        foreach ($groups as $group)
-        {
-            $this->data['groups'][] = $this->prepare_for_list($group);
-        }
+        $this->data['groups'] = array_map
+        (
+            'fi_openkeidas_groups_controllers_groups::add_members_for_group',
+            $qb->execute()
+        );
     }
     
     public function get_search(array $args)
@@ -42,11 +41,11 @@ class fi_openkeidas_groups_controllers_groups
         $qb = new midgard_query_builder('fi_openkeidas_groups_group');
         $qb->add_constraint('title', 'LIKE', "{$_GET['search']}%");
         $qb->add_order('metadata.score', 'DESC');
-        $groups = $qb->execute();
-        foreach ($groups as $group)
-        {
-            $this->data['search_groups'][] = $this->prepare_for_list($group);
-        }
+        $this->data['groups'] = array_map
+        (
+            'fi_openkeidas_groups_controllers_groups::add_members_for_group',
+            $qb->execute()
+        );
     }
 
     public function get_user(array $args)
@@ -73,34 +72,15 @@ class fi_openkeidas_groups_controllers_groups
         $qb->add_order('metadata.score', 'DESC');
 
         $groups = $qb->execute();
-        foreach ($groups as $group)
-        {
-            $group = $this->prepare_for_list($group);
-
-            $mc = new midgard_collector('fi_openkeidas_diary_challenge_participant', 'grp', $group->id);
-            //$mc->add_constraint('metadata.isapproved', '=', true);
-            $mc->add_constraint('challenge.start', '<=', new DateTime());
-            $mc->add_constraint('challenge.enddate', '>', new DateTime());
-            $mc->set_key_property('challenge');
-            $mc->execute();
-            $challenge_ids = array_keys($mc->list_keys());
-            if (count($challenge_ids) == 0)
-            {
-                $this->data['groups'][] = $group;
-                continue;
-            }
-            $qb = new midgard_query_builder('fi_openkeidas_diary_challenge');
-            $qb->add_constraint('id', 'IN', $challenge_ids);
-            $group->challenges = array();
-            $challenges = $qb->execute();
-            foreach ($challenges as $challenge)
-            {
-                $challenge->url = midgardmvc_core::get_instance()->dispatcher->generate_url('challenge_read', array('challenge' => $challenge->guid), 'fi_openkeidas_diary');
-                $group->challenges[] = $challenge;
-            }
-
-            $this->data['groups'][] = $group;
-        }
+        $this->data['groups'] = array_map
+        (
+            'fi_openkeidas_groups_controllers_groups::add_challenges_for_group',
+            array_map
+            (
+                'fi_openkeidas_groups_controllers_groups::add_members_for_group',
+                $qb->execute()
+            )
+        );
     }
 
     public function get_active(array $args)
@@ -108,23 +88,47 @@ class fi_openkeidas_groups_controllers_groups
         $qb = new midgard_query_builder('fi_openkeidas_groups_group');
         $qb->set_limit(5);
         $qb->add_order('metadata.score', 'DESC');
-        $this->data['groups'] = array();
-        $groups = $qb->execute();
-        foreach ($groups as $group)
-        {
-            $this->data['groups'][] = $this->prepare_for_list($group);
-        }
+        $this->data['groups'] = array_map
+        (
+            'fi_openkeidas_groups_controllers_groups::add_members_for_group',
+            $qb->execute()
+        );
     }
 
-    private function prepare_for_list(fi_openkeidas_groups_group $group)
+    public static function add_members_for_group(fi_openkeidas_groups_group $group)
     {
-        $group->url = midgardmvc_core::get_instance()->dispatcher->generate_url('group_read', array('group' => $group->guid), $this->request);
+        $group->url = midgardmvc_core::get_instance()->dispatcher->generate_url('group_read', array('group' => $group->guid), 'fi_openkeidas_groups');
 
         $member_qb = new midgard_query_builder('fi_openkeidas_groups_group_member');
         $member_qb->add_constraint('grp', '=', $group->id);
         $member_qb->add_constraint('metadata.isapproved', '=', true);
         $group->members = $member_qb->count();
 
+        return $group;
+    }
+    
+    public static function add_challenges_for_group(fi_openkeidas_groups_group $group)
+    {
+        $mc = new midgard_collector('fi_openkeidas_diary_challenge_participant', 'grp', $group->id);
+        //$mc->add_constraint('metadata.isapproved', '=', true);
+        $mc->add_constraint('challenge.start', '<=', new DateTime());
+        $mc->add_constraint('challenge.enddate', '>', new DateTime());
+        $mc->set_key_property('challenge');
+        $mc->execute();
+        $challenge_ids = array_keys($mc->list_keys());
+        if (count($challenge_ids) == 0)
+        {
+            return $group;
+        }
+        $qb = new midgard_query_builder('fi_openkeidas_diary_challenge');
+        $qb->add_constraint('id', 'IN', $challenge_ids);
+        $group->challenges = array();
+        $challenges = $qb->execute();
+        foreach ($challenges as $challenge)
+        {
+            $challenge->url = midgardmvc_core::get_instance()->dispatcher->generate_url('challenge_read', array('challenge' => $challenge->guid), 'fi_openkeidas_diary');
+            $group->challenges[] = $challenge;
+        }
         return $group;
     }
 }
