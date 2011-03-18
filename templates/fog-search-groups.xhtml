@@ -1,0 +1,23 @@
+<h1>Haku</h1>
+
+<form method="get" action="">
+    <tal:block tal:content="structure fi_openkeidas_groups/form/search/widget" />
+</form>
+
+<table tal:condition="fi_openkeidas_groups/search_groups">
+    <thead>
+        <tr>
+            <th>Ryhmä</th>
+            <th>Jäseniä</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr tal:repeat="group fi_openkeidas_groups/search_groups">
+            <th>
+                <a tal:attributes="href group/url" tal:content="group/title">Opettajanhuone</a>
+            </th>
+            <td tal:condition="exists:group/members" tal:content="group/members">5</td>
+        </tr>
+    </tbody>
+</table>
+

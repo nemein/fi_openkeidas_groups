@@ -9,6 +9,12 @@ routes:
         action: list
         template_aliases: 
             content: fog-list-groups
+    search:
+        path: '/search'
+        controller: fi_openkeidas_groups_controllers_groups
+        action: search
+        template_aliases: 
+            content: fog-search-groups
     user_groups:
         path: '/user'
         controller: fi_openkeidas_groups_controllers_groups

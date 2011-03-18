@@ -10,12 +10,6 @@ class fi_openkeidas_groups_controllers_groups
     {
         midgardmvc_core::get_instance()->authorization->require_user();
 
-        $this->data['form'] = midgardmvc_helper_forms::create('fi_openkeidas_groups_search');
-        $this->data['form']->set_method('get');
-        $search = $this->data['form']->add_field('search', 'text');
-        $search_widget = $search->set_widget('text');
-        $search_widget->set_label('Hae ryhmiä');
-
         $qb = new midgard_query_builder('fi_openkeidas_groups_group');
         $qb->set_limit(10);
         $qb->add_order('metadata.created', 'DESC');
@@ -25,7 +19,18 @@ class fi_openkeidas_groups_controllers_groups
         {
             $this->data['groups'][] = $this->prepare_for_list($group);
         }
+    }
+    
+    public function get_search(array $args)
+    {
+        midgardmvc_core::get_instance()->authorization->require_user();
 
+        $this->data['form'] = midgardmvc_helper_forms::create('fi_openkeidas_groups_search');
+        $this->data['form']->set_method('get');
+        $search = $this->data['form']->add_field('search', 'text');
+        $search_widget = $search->set_widget('text');
+        $search_widget->set_label('Hae ryhmiä');
+        
         $this->data['search_groups'] = array();
         if (   !isset($_GET['search'])
             || empty($_GET['search']))
