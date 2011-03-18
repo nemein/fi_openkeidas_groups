@@ -4,7 +4,7 @@
     <a class="button" href="/ryhmat/group/create/"><span>Luo ryhmä</span></a>
 </p>
 
-<div tal:condition="fi_openkeidas_groups/groups">
+<div class="new_groups" tal:condition="fi_openkeidas_groups/groups">
     <h2>Uusimmat ryhmät</h2>
 
     <table>
@@ -16,6 +16,27 @@
         </thead>
         <tbody>
             <tr tal:repeat="group fi_openkeidas_groups/groups">
+                <th>
+                    <a tal:attributes="href group/url" tal:content="group/title">Opettajanhuone</a>
+                </th>
+                <td tal:condition="exists:group/members" tal:content="group/members">5</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="active_groups">
+    <h2>Aktiivisimmat ryhmät</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Ryhmä</th>
+                <th>Jäseniä</th>
+            </tr>
+        </thead>
+        <tbody tal:define="top_groups php:midgardmvc.templating.dynamic_call('fi_openkeidas_groups', 'top_groups', array())">
+            <tr tal:repeat="group top_groups/groups">
                 <th>
                     <a tal:attributes="href group/url" tal:content="group/title">Opettajanhuone</a>
                 </th>
